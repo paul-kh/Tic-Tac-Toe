@@ -1,24 +1,33 @@
-import { useState } from "react";
+import { useState, useSyncExternalStore } from "react";
 
-export default function Player({ name, symbol, onEdit, editing }) {
+export default function Player({ initialName, symbol }) {
+  const [playerName, setPlayerName] = useState(initialName);
   const [isEditing, setIsEditing] = useState(false);
 
   function handleEditClick() {
-    setIsEditing(true);
+    setIsEditing(() => !isEditing);
   }
 
-  let playerName = <span className="player-name">{name}</span>;
+  // COMMON PRACTICE: 2-way binding when user inputting value in the <input>
+  function handleChange(event) {
+    setPlayerName(event.target.value);
+  }
 
-  if (isEditing) playerName = <input type="text" required />;
+  let editablePlayerName = <span className="player-name">{playerName}</span>;
+
+  if (isEditing)
+    editablePlayerName = (
+      <input type="text" value={playerName} onChange={handleChange} required />
+    );
 
   return (
     <>
       <li>
         <span className="player">
-          {playerName}
+          {editablePlayerName}
           <span className="player-symbol">{symbol}</span>
         </span>
-        <button onClick={handleEditClick}>edit</button>
+        <button onClick={handleEditClick}>{isEditing ? "Save" : "Edit"}</button>
       </li>
     </>
   );
