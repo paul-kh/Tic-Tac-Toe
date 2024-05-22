@@ -5,7 +5,8 @@ export default function Player({ initialName, symbol }) {
   const [isEditing, setIsEditing] = useState(false);
 
   function handleEditClick() {
-    setIsEditing(() => !isEditing);
+    // React auto put the previous state value a argument of the SetIsEditing() function.
+    setIsEditing((editing) => !editing); //React strongly recommended to avoid using setIsEditing(!isEditing)
   }
 
   // COMMON PRACTICE: 2-way binding when user inputting value in the <input>
