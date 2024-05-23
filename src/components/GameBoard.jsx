@@ -1,30 +1,39 @@
-import { useState } from "react";
-
 const initialGameboard = [
   [null, null, null],
   [null, null, null],
   [null, null, null],
 ];
 
-export default function GameBoard({ onSelectSquare, activePlayerSymbol }) {
-  const [gameBoard, setGameBoard] = useState(initialGameboard);
+export default function GameBoard({ onSelectSquare, turns }) {
+  // Deriving state data
+  // Manage as little state data as needed but derive as much as possible from the state data
+  let gameBoard = initialGameboard;
 
-  function handleSelectSquare(rowIndex, colIndex) {
-    setGameBoard((prevGameBoard) => {
-      // Updating Object State Immutably
-      // and Copying multi-dimentional array using the SPREAD operator
-      const updatedGameBoard = [
-        ...prevGameBoard.map((innerArray) => [...innerArray]),
-      ];
+  for (const turn of turns) {
+    const { square, player } = turn;
+    const { row, col } = square;
 
-      updatedGameBoard[rowIndex][colIndex] = activePlayerSymbol;
-      return updatedGameBoard;
-    });
-
-    // Function to get symbol of the active player
-    // The function gets executed when clicking on square of <GameBoard>
-    onSelectSquare();
+    gameBoard[row][col] = player;
   }
+
+  // const [gameBoard, setGameBoard] = useState(initialGameboard);
+
+  // function handleSelectSquare(rowIndex, colIndex) {
+  //   setGameBoard((prevGameBoard) => {
+  //     // Updating Object State Immutably
+  //     // and Copying multi-dimentional array using the SPREAD operator
+  //     const updatedGameBoard = [
+  //       ...prevGameBoard.map((innerArray) => [...innerArray]),
+  //     ];
+
+  //     updatedGameBoard[rowIndex][colIndex] = activePlayerSymbol;
+  //     return updatedGameBoard;
+  //   });
+
+  //   // Function to get symbol of the active player
+  //   // The function gets executed when clicking on square of <GameBoard>
+  //   onSelectSquare();
+  // }
 
   return (
     <ol id="game-board">
@@ -33,7 +42,7 @@ export default function GameBoard({ onSelectSquare, activePlayerSymbol }) {
           <ol>
             {row.map((playerSymbol, colIndex) => (
               <li key={colIndex}>
-                <button onClick={() => handleSelectSquare(rowIndex, colIndex)}>
+                <button onClick={() => onSelectSquare(rowIndex, colIndex)}>
                   {playerSymbol}
                 </button>
               </li>
