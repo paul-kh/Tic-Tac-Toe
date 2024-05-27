@@ -24,6 +24,14 @@ function deriveCurrentPlayer(gameTurns) {
 }
 
 function App() {
+  /* SHOWING PLAYER NAME AS WINNER INSTEAD OF SYMBOL*/
+  // It's not recommended to lift the state of <Player> component since it brings complexity
+  // Instead, we created another state in the <App> component for controlling player names & symbols
+  const [players, setPlayers] = useState({
+    X: "Player 1",
+    O: "Player 2",
+  });
+
   const [gameTurns, setGameTurns] = useState([]);
   // Line below was commented out because we try to manage little state as possible
   //const [activePlayer, setActivePlayer] = useState("X");
@@ -61,7 +69,7 @@ function App() {
       firstSquareSymbol === secondSquareSymbol &&
       firstSquareSymbol === thirdSquareSymbol
     ) {
-      winner = firstSquareSymbol;
+      winner = players[firstSquareSymbol];
     }
   }
 
@@ -88,6 +96,20 @@ function App() {
   function handleGameRestart() {
     setGameTurns([]);
   }
+
+  function handlePlayerName(symbol, newName) {
+    // We don't want to lose other player info
+    // since we're updating only 1 player's info
+    // so we have to immutate the state object by
+    // using the Spread operator in an anomymous function
+    setPlayers((prevPlayers) => {
+      return {
+        ...prevPlayers,
+        //modifying the symbol property to new player name  after spreading
+        [symbol]: newName,
+      };
+    });
+  }
   return (
     <main>
       <div id="game-container">
@@ -96,11 +118,13 @@ function App() {
             initialName="Player 1"
             symbol="X"
             isActive={activePlayer === "X"}
+            onChangeName={handlePlayerName}
           />
           <Player
             initialName="Player 2"
             symbol="O"
             isActive={activePlayer === "O"}
+            onChangeName={handlePlayerName}
           />
         </ol>
         {(winner || hasDraw) && (
