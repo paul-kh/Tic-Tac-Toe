@@ -5,6 +5,13 @@ import GameBoard from "./components/GameBoard";
 import Log from "./components/Log";
 import { WINNING_COMBINATIONS } from "./winning-combinations";
 
+// Lifted from <GameBoard> for determining winner
+const initialGameboard = [
+  [null, null, null],
+  [null, null, null],
+  [null, null, null],
+];
+
 function deriveCurrentPlayer(gameTurns) {
   let currentPlayer = "X"; //Initializing starting turn to player "X"
 
@@ -21,6 +28,39 @@ function App() {
   //const [activePlayer, setActivePlayer] = useState("X");
 
   const activePlayer = deriveCurrentPlayer(gameTurns);
+
+  // DETERMINING WINNER !!!!
+  // Winner should have symbol in all 3 squares of any element oject of the array WINNING_COMBINATION
+  // We need to check for symbol of the 3 squares in gameBoard array of the <GameBoard> to determine the winner.
+  // We have to lift the state of <GameBoard> so we can access its gameBoard array here
+  let gameBoard = initialGameboard;
+
+  for (const turn of gameTurns) {
+    const { square, player } = turn;
+    const { row, col } = square;
+
+    gameBoard[row][col] = player;
+  }
+
+  let winner;
+  //Checking symbol of each square
+  for (const combination of WINNING_COMBINATIONS) {
+    const firstSquareSymbol =
+      gameBoard[combination[0].row][combination[0].column];
+    const secondSquareSymbol =
+      gameBoard[combination[1].row][combination[1].column];
+    const thirdSquareSymbol =
+      gameBoard[combination[2].row][combination[2].column];
+
+    // If firstSquareSybol is null the we don't need to check for equality with 2nd and 3rd square symbols
+    if (
+      firstSquareSymbol &&
+      firstSquareSymbol === secondSquareSymbol &&
+      firstSquareSymbol === thirdSquareSymbol
+    ) {
+      winner = firstSquareSymbol;
+    }
+  }
 
   function handleSelectSquare(rowIndex, colIndex) {
     //setActivePlayer((curActivePlayer) => (curActivePlayer === "X" ? "O" : "X"));
@@ -50,7 +90,9 @@ function App() {
             isActive={activePlayer === "O"}
           />
         </ol>
-        <GameBoard onSelectSquare={handleSelectSquare} turns={gameTurns} />
+        {winner && <p>You won, {winner}!</p>}{" "}
+        {/* same as this code: {winner ? <p>You won, {winer}! : null} */}
+        <GameBoard onSelectSquare={handleSelectSquare} board={gameBoard} />
       </div>
       <Log turns={gameTurns} />
     </main>
