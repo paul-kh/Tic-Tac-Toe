@@ -69,12 +69,6 @@ function App() {
   // There's a draw when all the 9 game turns completed and no winner
   const hasDraw = gameTurns.length === 9 && !winner;
 
-  //RESETTING GAME
-  // To reset the game, simply empty the gameTurns state array
-  function resetGame(gameTurns) {
-    setGameTurns([]);
-  }
-
   function handleSelectSquare(rowIndex, colIndex) {
     //setActivePlayer((curActivePlayer) => (curActivePlayer === "X" ? "O" : "X"));
     setGameTurns((prevTurns) => {
@@ -87,6 +81,12 @@ function App() {
 
       return updatedTurns;
     });
+  }
+
+  //RESETTING GAME
+  // To reset the game, simply empty the gameTurns state array
+  function handleGameRestart() {
+    setGameTurns([]);
   }
   return (
     <main>
@@ -104,7 +104,7 @@ function App() {
           />
         </ol>
         {(winner || hasDraw) && (
-          <GameOver winner={winner} resetGame={resetGame} />
+          <GameOver winner={winner} onResetGame={handleGameRestart} />
         )}
         {/* same as this code: {winner ? <p>You won, {winer}! : null} */}
         <GameBoard onSelectSquare={handleSelectSquare} board={gameBoard} />
