@@ -3,6 +3,7 @@ import { act, useState } from "react";
 import Player from "./components/player";
 import GameBoard from "./components/GameBoard";
 import Log from "./components/Log";
+import { WINNING_COMBINATIONS } from "./winning-combinations";
 
 function deriveCurrentPlayer(gameTurns) {
   let currentPlayer = "X"; //Initializing starting turn to player "X"
