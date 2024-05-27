@@ -6,8 +6,13 @@ import Log from "./components/Log";
 import GameOver from "./components/GameOver";
 import { WINNING_COMBINATIONS } from "./winning-combinations";
 
+const PLAYERS = {
+  X: "Player 1",
+  O: "Player 2",
+};
+
 // Lifted from <GameBoard> for determining winner
-const initialGameboard = [
+const INITIAL_GAME_BOARD = [
   [null, null, null],
   [null, null, null],
   [null, null, null],
@@ -23,28 +28,9 @@ function deriveCurrentPlayer(gameTurns) {
   return currentPlayer;
 }
 
-function App() {
-  /* SHOWING PLAYER NAME AS WINNER INSTEAD OF SYMBOL*/
-  // It's not recommended to lift the state of <Player> component since it brings complexity
-  // Instead, we created another state in the <App> component for controlling player names & symbols
-  const [players, setPlayers] = useState({
-    X: "Player 1",
-    O: "Player 2",
-  });
-
-  const [gameTurns, setGameTurns] = useState([]);
-  // Line below was commented out because we try to manage little state as possible
-  //const [activePlayer, setActivePlayer] = useState("X");
-
-  const activePlayer = deriveCurrentPlayer(gameTurns);
-
-  // DETERMINING WINNER !!!!
-  // Winner should have symbol in all 3 squares of any element oject of the array WINNING_COMBINATION
-  // We need to check for symbol of the 3 squares in gameBoard array of the <GameBoard> to determine the winner.
-  // We have to lift the state of <GameBoard> so we can access its gameBoard array here
-
+function deriveGameBoard(gameTurns) {
   //Always deep copy array or object by NOT immutating them
-  let gameBoard = [...initialGameboard].map((innerArray) => [...innerArray]);
+  let gameBoard = [...INITIAL_GAME_BOARD].map((innerArray) => [...innerArray]);
 
   for (const turn of gameTurns) {
     const { square, player } = turn;
@@ -52,6 +38,14 @@ function App() {
 
     gameBoard[row][col] = player;
   }
+  return gameBoard;
+}
+
+function deriveWinner(gameBoard, players) {
+  // DETERMINING WINNER !!!!
+  // Winner should have symbol in all 3 squares of any element oject of the array WINNING_COMBINATION
+  // We need to check for symbol of the 3 squares in gameBoard array of the <GameBoard> to determine the winner.
+  // We have to lift the state of <GameBoard> so we can access its gameBoard array here
 
   let winner;
   //Checking symbol of each square
@@ -72,13 +66,28 @@ function App() {
       winner = players[firstSquareSymbol];
     }
   }
+  return winner;
+}
+
+function App() {
+  /* SHOWING PLAYER NAME AS WINNER INSTEAD OF SYMBOL*/
+  // It's not recommended to lift the state of <Player> component since it brings complexity
+  // Instead, we created another state in the <App> component for controlling player names & symbols
+  const [players, setPlayers] = useState(PLAYERS);
+
+  const [gameTurns, setGameTurns] = useState([]);
+
+  const activePlayer = deriveCurrentPlayer(gameTurns);
+
+  const gameBoard = deriveGameBoard(gameTurns);
+
+  const winner = deriveWinner(gameBoard, players);
 
   // CHECKING FOR A DRAW
   // There's a draw when all the 9 game turns completed and no winner
   const hasDraw = gameTurns.length === 9 && !winner;
 
   function handleSelectSquare(rowIndex, colIndex) {
-    //setActivePlayer((curActivePlayer) => (curActivePlayer === "X" ? "O" : "X"));
     setGameTurns((prevTurns) => {
       const currentPlayer = deriveCurrentPlayer(prevTurns);
 
@@ -115,13 +124,13 @@ function App() {
       <div id="game-container">
         <ol id="players" className="highlight-player">
           <Player
-            initialName="Player 1"
+            initialName={PLAYERS.X}
             symbol="X"
             isActive={activePlayer === "X"}
             onChangeName={handlePlayerName}
           />
           <Player
-            initialName="Player 2"
+            initialName={PLAYERS.O}
             symbol="O"
             isActive={activePlayer === "O"}
             onChangeName={handlePlayerName}
