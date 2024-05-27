@@ -34,7 +34,9 @@ function App() {
   // Winner should have symbol in all 3 squares of any element oject of the array WINNING_COMBINATION
   // We need to check for symbol of the 3 squares in gameBoard array of the <GameBoard> to determine the winner.
   // We have to lift the state of <GameBoard> so we can access its gameBoard array here
-  let gameBoard = initialGameboard;
+
+  //Always deep copy array or object by NOT immutating them
+  let gameBoard = [...initialGameboard].map((innerArray) => [...innerArray]);
 
   for (const turn of gameTurns) {
     const { square, player } = turn;
@@ -67,6 +69,12 @@ function App() {
   // There's a draw when all the 9 game turns completed and no winner
   const hasDraw = gameTurns.length === 9 && !winner;
 
+  //RESETTING GAME
+  // To reset the game, simply empty the gameTurns state array
+  function resetGame(gameTurns) {
+    setGameTurns([]);
+  }
+
   function handleSelectSquare(rowIndex, colIndex) {
     //setActivePlayer((curActivePlayer) => (curActivePlayer === "X" ? "O" : "X"));
     setGameTurns((prevTurns) => {
@@ -95,7 +103,9 @@ function App() {
             isActive={activePlayer === "O"}
           />
         </ol>
-        {(winner || hasDraw) && <GameOver winner={winner} />}
+        {(winner || hasDraw) && (
+          <GameOver winner={winner} resetGame={resetGame} />
+        )}
         {/* same as this code: {winner ? <p>You won, {winer}! : null} */}
         <GameBoard onSelectSquare={handleSelectSquare} board={gameBoard} />
       </div>
