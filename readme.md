@@ -30,5 +30,3 @@ A player plays the tic-tac-toe game using the online gameboard on a web browser 
 - JavaScript
 - HTML 5
 - CSS
-
-Note: I coded along while following React course by Academind @ https://github.com/academind
