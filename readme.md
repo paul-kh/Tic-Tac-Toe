@@ -10,7 +10,7 @@ When all the buttons on the gameboard are filled up with palyer symbols "X" or "
 
 ## User Story
 
-A player plays the tic-tac-toe game using the online gameboard on a web browser with anohter player to find a winer or draw at the end of the game.
+A player plays the tic-tac-toe game using the online game board on a web browser with another player to find a winner or draw at the end of the game.
 
 ## Techniques applied
 
